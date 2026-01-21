@@ -16,3 +16,49 @@ type User {
 }
 
 
+
+## Consulter un film en particulier
+
+type Film {
+    id: ID!
+    title: String!
+    release_year: String!
+    length: Int!
+    description: String!
+    rating: String!
+    special_features: String!
+    image: String!
+    created_at: DateTime!
+    language : Language! @belongsTo
+    critics : [Critic!]! @hasMany
+    actors : [Actor!]! @belongsToMany
+}
+
+type Language {
+    id: ID!
+    name: String!
+    films : [Film!]! @hasMany
+}
+
+type Critic {
+    id: ID!
+    score: Float!
+    comment: String!
+    created_at: DateTime
+    updated_at: DateTime
+    film : Film! @belongsTo
+    user : User! @belongsTo
+}
+
+type Actor {
+    id: ID!
+    first_name: String!
+    last_name: String!
+    birthdate: Date!
+    films : [Film!]! @belongsToMany
+}
+
+type Query {
+    films : [Film!]! @all
+    film (id : ID! @eq) : Film @find
+}
