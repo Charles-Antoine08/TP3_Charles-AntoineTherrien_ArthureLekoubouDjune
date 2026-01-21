@@ -64,4 +64,28 @@ class AuthController extends Controller
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+
+
+    public function logout(Request $request)
+    {
+        try {
+            $request->user()->tokens()->delete();
+
+            return response()->json(null, Response::HTTP_NO_CONTENT);
+        } catch (Exception $e) {
+            return response()->json([
+                'error' => 'Erreur lors de la déconnexion'
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+
+
+
+
+
+
+
+    
 }
