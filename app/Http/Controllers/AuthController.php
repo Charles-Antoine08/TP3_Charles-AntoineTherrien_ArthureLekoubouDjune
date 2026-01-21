@@ -2,18 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\RegisterRequest;
 use Illuminate\Http\Request;
-use App\Models\User;
+use Illuminate\Support\Facades\{Auth, Hash};
 use App\Enumerations\Roles;
-use Illuminate\Support\Facades\Hash;
-use Symfony\Component\HttpFoundation\Response;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\{LoginRequest, RegisterRequest};
+use App\Models\User;
 use Exception;
+use Symfony\Component\HttpFoundation\Response;
 
 class AuthController extends Controller
 {
 
-     public function register(RegisterRequest $request)
+    public function register(RegisterRequest $request)
     {
         try {
             $user = User::create([
@@ -29,10 +30,37 @@ class AuthController extends Controller
                 'message' => 'User créé avec succès',
                 'user' => $user
             ], Response::HTTP_CREATED);
-
         } catch (Exception $e) {
             return response()->json([
                 'error' => 'Erreur lors de l’inscription'
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+    public function login(LoginRequest $request)
+    {
+        try {
+            if (!Auth::attempt([
+                'login'    => $request->login,
+                'password' => $request->password,
+            ])) {
+                return response()->json([
+                    'error' => 'Identifiants invalides'
+                ], Response::HTTP_UNAUTHORIZED);
+            }
+
+            $user = Auth::user();
+
+            $token = $user->createToken('auth_token')->plainTextToken;
+
+            return response()->json([
+                'user'  => $user,
+                'token' => $token
+            ], Response::HTTP_OK);
+        } catch (Exception $e) {
+            return response()->json([
+                'error' => 'Erreur lors de la connexion'
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
