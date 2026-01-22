@@ -13,11 +13,9 @@ return new class extends Migration
     {
         Schema::create('film_statistics', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('film_id')
-                  ->constrained('films')
-                  ->cascadeOnDelete();
-            $table->float('score');
-            $table->integer('votes');
+            $table->foreignId('film_id')->constrained()->cascadeOnDelete();
+            $table->float('score')->nullable();
+            $table->integer('votes')->nullable();
             $table->timestamps();
         });
     }
