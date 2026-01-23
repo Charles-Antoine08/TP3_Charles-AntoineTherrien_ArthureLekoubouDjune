@@ -1,6 +1,21 @@
 "A datetime string with format `Y-m-d H:i:s`, e.g. `2018-05-23 13:43:32`."
-scalar DateTime @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
+scalar DateTime
+  @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
 
+type User {
+  id: ID!
+  login: String!
+  email: String!
+  first_name: String!
+  last_name: String!
+  created_at: DateTime!
+  updated_at: DateTime!
+}
+
+type Film {
+  id: ID!
+  title: String!
+}
 
 type Critic {
   id: ID!
@@ -10,107 +25,24 @@ type Critic {
   user: User @belongsTo
 }
 
-
 type Query {
-    me: User  @auth
-}
+  me: User @auth
 
-type User {
-    id: ID!
-    login: String!
-    email: String!
-    first_name: String!
-    last_name: String!
-    created_at: DateTime!
-    updated_at: DateTime!
-}
-
-
-input CreateCriticInput {
-  film_id: ID!
-  score: Float!
-  comment: String!
-}
-
-type Mutation {
-  createCritic(input: CreateCriticInput!): Critic
-    @create
-    @guard
-}
-
-
-type Mutation {
-  createCritic(
-    film_id: ID!
-    score: Float!
-    comment: String!
-  ): Critic
-    @guard
-    @can(ability: "create", model: "App\\Models\\Critic")
-
-  updateCritic(
-    id: ID!
-    score: Float
-    comment: String
-  ): Critic
-    @guard
-    @can(ability: "update", find: "id")
-
-  deleteCritic(
-    id: ID!
-  ): Boolean
-    @guard
-    @can(ability: "delete", find: "id")
-}
-
-
-
-# ---------------------------------------------------
-
-type Mutation {
-  createCritic(
-    film_id: ID!
-    score: Float!
-    comment: String!
-  ): Critic
-    @guard
-    @can(ability: "create", model: "App\\Models\\Critic")
-}
-
-#Ajout d’une critique (utilisateur authentifié)
-
-type Mutation {
-  createCritic(
-    film_id: ID!
-    score: Float!
-    comment: String!
-  ): FilmStatistic
-    @guard
-}
-
-# Lier le resolver au schéma
-
-type Mutation {
-  createCritic(
-    film_id: ID!
-    score: Float!
-    comment: String!
-  ): FilmStatistic
-    @guard
-    @field(resolver: "App\\GraphQL\\Mutations\\CreateCritic")
-}
-
-# Consulter les critiques de l’utilisateur authentifié
-
-type Query {
   myCritics: [Critic!]!
     @guard
     @field(resolver: "App\\GraphQL\\Queries\\MyCritics")
 }
 
-# Modifier une critique (sécurisée)
-
 type Mutation {
+  createCritic(
+    film_id: ID!
+    score: Float!
+    comment: String!
+  ): Critic
+    @guard
+    @can(ability: "create", model: "App\\Models\\Critic")
+    @field(resolver: "App\\GraphQL\\Mutations\\CreateCritic")
+
   updateCritic(
     id: ID!
     score: Float!
@@ -119,11 +51,7 @@ type Mutation {
     @guard
     @can(ability: "update", model: "App\\Models\\Critic")
     @field(resolver: "App\\GraphQL\\Mutations\\UpdateCritic")
-}
 
-# Supprimer une critique (sécurisée)
-
-type Mutation {
   deleteCritic(
     id: ID!
   ): Boolean
@@ -131,4 +59,3 @@ type Mutation {
     @can(ability: "delete", model: "App\\Models\\Critic")
     @field(resolver: "App\\GraphQL\\Mutations\\DeleteCritic")
 }
-
