@@ -59,3 +59,25 @@ type Mutation {
     @can(ability: "delete", model: "App\\Models\\Critic")
     @field(resolver: "App\\GraphQL\\Mutations\\DeleteCritic")
 }
+
+
+input FilmImageUpdateInput {
+  film_id: ID!
+  image: String!
+}
+
+input CreateActorInput {
+  first_name: String!
+  last_name: String!
+  birthdate: Date!
+  film_id: [ID!]
+  film_update: [FilmImageUpdateInput!]
+}
+
+type Mutation {
+  createActor(input: CreateActorInput!): Actor
+    @guard
+    @can(ability: "admin")
+    @field(resolver: "App\\GraphQL\\Mutations\\CreateActor")
+}
+
