@@ -2,9 +2,9 @@
 
 namespace App\GraphQL\Mutations;
 
-use App\CreateCriticValidator;
+use App\Validators\CreateCriticValidator;
 use App\Models\{Critic, FilmStatistic};
-use Illuminate\Support\Facades\{Auth, Validator};
+use Illuminate\Support\Facades\Auth;
 
 class CreateCritic
 {
@@ -19,20 +19,24 @@ class CreateCritic
             'user_id' => Auth::id(),
         ]);
 
+        $stats = FilmStatistic::firstOrCreate(
+            ['film_id' => $args['film_id']],
+            [
+                'score' => 0,
+                'votes' => 0,
+            ]
+        );
 
-        $stats = FilmStatistic::where('film_id', $args['film_id'])->first();
+        $totalVotes = $stats->votes + 1;
 
-        if ($stats) {
-            $totalVotes = $stats->votes + 1;
-            $newScore = (
-                ($stats->score * $stats->votes) + $args['score']
-            ) / $totalVotes;
+        $newScore = (
+            ($stats->score * $stats->votes) + $args['score']
+        ) / $totalVotes;
 
-            $stats->update([
-                'score' => round($newScore, 2),
-                'votes' => $totalVotes,
-            ]);
-        }
+        $stats->update([
+            'score' => round($newScore, 2),
+            'votes' => $totalVotes,
+        ]);
 
         return $critic;
     }
