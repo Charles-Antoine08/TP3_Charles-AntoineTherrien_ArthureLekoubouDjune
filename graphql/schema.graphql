@@ -60,17 +60,6 @@ type Actor {
     films : [Film!]! @belongsToMany
 }
 
-type Mutation {
-    createCritic(input: createCriticInput) : Critic! @create
-}
-
-input createCriticInput {
-    user_id: ID!
-    film_id: ID!
-    score: Float!
-    comment: String!
-}
-
 type Query {
     films : [Film!]! @all
     films (id : ID! @eq) : Film @find
