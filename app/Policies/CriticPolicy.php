@@ -36,7 +36,7 @@ class CriticPolicy
      */
     public function update(User $user, Critic $critic): bool
     {
-        return false;
+         return $user->id === $critic->user_id;
     }
 
     /**

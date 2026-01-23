@@ -108,4 +108,16 @@ type Query {
     @field(resolver: "App\\GraphQL\\Queries\\MyCritics")
 }
 
+# Modifier une critique (sécurisée)
+
+type Mutation {
+  updateCritic(
+    id: ID!
+    score: Float!
+    comment: String!
+  ): Critic
+    @guard
+    @can(ability: "update", model: "App\\Models\\Critic")
+    @field(resolver: "App\\GraphQL\\Mutations\\UpdateCritic")
+}
 
