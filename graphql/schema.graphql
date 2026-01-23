@@ -121,3 +121,14 @@ type Mutation {
     @field(resolver: "App\\GraphQL\\Mutations\\UpdateCritic")
 }
 
+# Supprimer une critique (sécurisée)
+
+type Mutation {
+  deleteCritic(
+    id: ID!
+  ): Boolean
+    @guard
+    @can(ability: "delete", model: "App\\Models\\Critic")
+    @field(resolver: "App\\GraphQL\\Mutations\\DeleteCritic")
+}
+
