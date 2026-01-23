@@ -1,6 +1,16 @@
 "A datetime string with format `Y-m-d H:i:s`, e.g. `2018-05-23 13:43:32`."
 scalar DateTime @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
 
+
+type Critic {
+  id: ID!
+  score: Float!
+  comment: String!
+  film: Film @belongsTo
+  user: User @belongsTo
+}
+
+
 type Query {
     me: User  @auth
 }
@@ -15,4 +25,78 @@ type User {
     updated_at: DateTime!
 }
 
+
+input CreateCriticInput {
+  film_id: ID!
+  score: Float!
+  comment: String!
+}
+
+type Mutation {
+  createCritic(input: CreateCriticInput!): Critic
+    @create
+    @guard
+}
+
+
+type Mutation {
+  createCritic(
+    film_id: ID!
+    score: Float!
+    comment: String!
+  ): Critic
+    @guard
+    @can(ability: "create", model: "App\\Models\\Critic")
+
+  updateCritic(
+    id: ID!
+    score: Float
+    comment: String
+  ): Critic
+    @guard
+    @can(ability: "update", find: "id")
+
+  deleteCritic(
+    id: ID!
+  ): Boolean
+    @guard
+    @can(ability: "delete", find: "id")
+}
+
+
+
+# ---------------------------------------------------
+
+type Mutation {
+  createCritic(
+    film_id: ID!
+    score: Float!
+    comment: String!
+  ): Critic
+    @guard
+    @can(ability: "create", model: "App\\Models\\Critic")
+}
+
+#Ajout d’une critique (utilisateur authentifié)
+
+type Mutation {
+  createCritic(
+    film_id: ID!
+    score: Float!
+    comment: String!
+  ): FilmStatistic
+    @guard
+}
+
+# Lier le resolver au schéma
+
+type Mutation {
+  createCritic(
+    film_id: ID!
+    score: Float!
+    comment: String!
+  ): FilmStatistic
+    @guard
+    @field(resolver: "App\\GraphQL\\Mutations\\CreateCritic")
+}
 
