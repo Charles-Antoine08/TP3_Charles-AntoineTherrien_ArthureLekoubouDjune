@@ -22,6 +22,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-         Gate::policy(Critic::class, CriticPolicy::class);
+        // Register the Critic policy
+        Gate::policy(Critic::class, CriticPolicy::class);
+
+        // Define an 'admin' gate
+        Gate::define('admin', fn($user) => $user->role->name === 'ADMIN');
     }
 }
