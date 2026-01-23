@@ -17,10 +17,12 @@ type User {
 
 
 
-## https://lighthouse-php.com/6/api-reference/directives.html#paginate
-## https://lighthouse-php.com/6/the-basics/schema.html#types
-## https://lighthouse-php.com/6/api-reference/directives.html#where
-## j'ai écrit dans ma barre de recherche : php graphql laravel, liste operator. Et Copilot m'a répondu.
+## source : https://lighthouse-php.com/6/api-reference/directives.html#paginate
+## source : https://lighthouse-php.com/6/the-basics/schema.html#types
+## source : https://lighthouse-php.com/6/api-reference/directives.html#where
+## source : https://graphql.org/learn/mutations/
+## source : https://lighthouse-php.com/6/the-basics/schema.html#the-root-types
+## source : j'ai écrit dans ma barre de recherche : php graphql laravel, liste operator. Et Copilot m'a répondu.
 
 type Film {
     id: ID!
@@ -59,7 +61,14 @@ type Actor {
 }
 
 type Mutation {
-    createCritic(user_id: ID!, film_id: ID!, score: Float!, comment: String!) : Critic! @create
+    createCritic(input: createCriticInput) : Critic! @create
+}
+
+input createCriticInput {
+    user_id: ID!
+    film_id: ID!
+    score: Float!
+    comment: String!
 }
 
 type Query {
