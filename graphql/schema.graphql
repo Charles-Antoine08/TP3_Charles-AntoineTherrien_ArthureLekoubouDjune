@@ -58,6 +58,10 @@ type Actor {
     films : [Film!]! @belongsToMany
 }
 
+type Mutation {
+    createCritic(user_id: ID!, film_id: ID!, score: Float!, comment: String!) : Critic! @create
+}
+
 type Query {
     films : [Film!]! @all
     films (id : ID! @eq) : Film @find
