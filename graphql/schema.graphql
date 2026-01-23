@@ -100,3 +100,12 @@ type Mutation {
     @field(resolver: "App\\GraphQL\\Mutations\\CreateCritic")
 }
 
+# Consulter les critiques de l’utilisateur authentifié
+
+type Query {
+  myCritics: [Critic!]!
+    @guard
+    @field(resolver: "App\\GraphQL\\Queries\\MyCritics")
+}
+
+
