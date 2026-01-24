@@ -1,21 +1,108 @@
 "A datetime string with format `Y-m-d H:i:s`, e.g. `2018-05-23 13:43:32`."
-scalar DateTime @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
+scalar DateTime
+  @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
 
-type Query {
-    me: User  @auth
-}
+# TYPES
 
 type User {
-    id: ID!
-    login: String!
-    email: String!
-    first_name: String!
-    last_name: String!
-    created_at: DateTime!
-    updated_at: DateTime!
+  id: ID!
+  login: String!
+  email: String!
+  first_name: String!
+  last_name: String!
+  created_at: DateTime!
+  updated_at: DateTime!
 }
 
+type Film {
+  id: ID!
+  title: String!
+  statistic: FilmStatistic @hasOne
+}
 
+type FilmStatistic {
+  id: ID!
+  score: Float
+  votes: Int
+}
+
+type Actor {
+  id: ID!
+  first_name: String!
+  last_name: String!
+  birthdate: DateTime!
+  films: [Film!]! @belongsToMany
+}
+
+type Critic {
+  id: ID!
+  score: Float!
+  comment: String!
+  film: Film @belongsTo
+  user: User @belongsTo
+}
+
+# QUERIES
+
+type Query {
+  me: User @auth
+
+  myCritics: [Critic!]!
+    @guard
+    @field(resolver: "App\\GraphQL\\Queries\\MyCritics")
+
+  film(id: ID! @eq): Film
+    @find(model: "App\\Models\\Film")
+}
+
+# INPUTS
+
+input FilmImageUpdateInput {
+  film_id: ID!
+  image: String!
+}
+
+input CreateActorInput {
+  first_name: String!
+  last_name: String!
+  birthdate: DateTime!
+  film_id: [ID!]
+  film_update: [FilmImageUpdateInput!]
+}
+
+# MUTATIONS
+
+type Mutation {
+  createCritic(
+    film_id: ID!
+    score: Float!
+    comment: String!
+  ): Critic
+    @guard
+    @can(ability: "create", model: "App\\Models\\Critic")
+    @field(resolver: "App\\GraphQL\\Mutations\\CreateCritic")
+
+  updateCritic(
+    id: ID!
+    score: Float!
+    comment: String!
+  ): Critic
+    @guard
+    @can(ability: "update", model: "App\\Models\\Critic")
+    @field(resolver: "App\\GraphQL\\Mutations\\UpdateCritic")
+
+  deleteCritic(
+    id: ID!
+  ): Boolean
+    @guard
+    @can(ability: "delete", model: "App\\Models\\Critic")
+    @field(resolver: "App\\GraphQL\\Mutations\\DeleteCritic")
+
+  createActor(input: CreateActorInput!): Actor
+    @guard
+    @can(ability: "admin")
+    @field(resolver: "App\\GraphQL\\Mutations\\CreateActor")
+}
 
 ## source : https://lighthouse-php.com/6/api-reference/directives.html#paginate
 ## source : https://lighthouse-php.com/6/the-basics/schema.html#types
