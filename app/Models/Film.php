@@ -12,7 +12,7 @@ class Film extends Model
 
     protected $fillable =
     [
-        'title', 
+        'title',
         'release_year',
         'length',
         'description',
@@ -22,19 +22,24 @@ class Film extends Model
         'image'
     ];
 
-    public function language() 
+    public function language()
     {
         return $this->belongsTo('App\Models\Language');
     }
 
 
-    public function critics() 
+    public function critics()
     {
         return $this->hasMany('App\Models\Critic');
     }
-    
-    public function actors() 
+
+    public function actors()
     {
         return $this->belongsToMany('App\Models\Actor');
+    }
+
+    public function statistic()
+    {
+        return $this->hasOne(FilmStatistic::class);
     }
 }
