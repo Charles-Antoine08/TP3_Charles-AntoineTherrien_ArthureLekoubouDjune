@@ -2,10 +2,10 @@
 
 namespace App\Providers;
 
-use App\Models\Critic;
-use App\Policies\CriticPolicy;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
+use App\Models\{Actor, Critic};
+use App\Policies\{ActorPolicy, CriticPolicy};
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -25,7 +25,7 @@ class AppServiceProvider extends ServiceProvider
         // Register the Critic policy
         Gate::policy(Critic::class, CriticPolicy::class);
 
-        // Define an 'admin' gate
-        Gate::define('admin', fn($user) => $user->role->name === 'ADMIN');
+        // Register the Actor policy
+        Gate::policy(Actor::class, ActorPolicy::class);
     }
 }
