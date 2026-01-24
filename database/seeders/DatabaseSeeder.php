@@ -3,8 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\Critic;
-use App\Models\User;
+use App\Models\{Critic, User};
 
 class DatabaseSeeder extends Seeder
 {
@@ -15,12 +14,13 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        $this->call([            
+        $this->call([
             LanguageSeeder::class,
             FilmSeeder::class,
             ActorSeeder::class,
             FilmActorSeeder::class,
             RoleSeeder::class,
+            FilmStatisticsSeeder::class,
         ]);
 
 
