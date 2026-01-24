@@ -1,0 +1,110 @@
+## Consulter un film en particulier
+
+query {
+  films (id:2){
+    title,
+    critics {
+      id,
+      score,
+      comment,
+    }
+  }
+}
+
+## Consultation de tous les acteurs d’un certain film
+
+## J'ai mit id:9 comme exemple mais il marche pour chaque id de film.
+
+query {
+  films (id:9) {
+    title,
+    actors {
+      last_name,
+      first_name,
+      birthdate,
+    }
+  }
+}
+
+## Recherche de films - Cas 1 : Sans critère avec pagination (demandez la page 1)
+
+query {
+  filmsPaginated (page:1){
+    data {
+      id,
+      title,
+      description,
+      release_year,
+      length,
+    }
+    paginatorInfo {
+      currentPage
+      lastPage,
+    }
+  }
+}
+
+## Recherche de films - Cas 2 : Avec le mot-clé "AL" (sur titre ou descritpion) avec pagination (demandez la page 1)
+
+query {
+  filmsFiltreByTitle (title: "%AL%", page:1){
+    data {
+      id,
+      title,
+      description,
+      release_year,
+      length,
+    }
+    paginatorInfo {
+      currentPage
+      lastPage,
+    }
+  }
+}
+
+## Recherche de films - Cas 3 : Avec le mot-clé "AL" (sur titre ou descritpion), minimum année 2006, entre 120 et 150 minutes avec pagination (demandez la page 1)
+
+query {
+  filmsFiltreByDescription (description: "%AL%", 
+    release_year : 2006, length_min : 120, length_max : 150, 
+    page:1){
+    data {
+      id,
+      title,
+      description,
+      release_year,
+      length,
+    }
+    paginatorInfo {
+      currentPage
+      lastPage,
+    }
+  }
+}
+
+## Consulter les informations de l’utilisateur authentifié
+
+
+## Consulter les critiques de l’utilisateur authentifié
+
+
+## Ajout d’une critique de film
+
+
+## Ajout d’un acteur (lier l'acteur au film 1, mettre à jour l'image du film 2)
+
+
+
+mutation {
+  createCritic(user_id: 1
+  film_id: 1 score: 84.2 
+   comment: "Quel film incroyable!!"
+ ) {
+   id
+   score
+   comment
+   film {
+     title
+    }
+  }
+}
