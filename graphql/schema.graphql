@@ -103,3 +103,77 @@ type Mutation {
     @can(ability: "admin")
     @field(resolver: "App\\GraphQL\\Mutations\\CreateActor")
 }
+
+## source : https://lighthouse-php.com/6/api-reference/directives.html#paginate
+## source : https://lighthouse-php.com/6/the-basics/schema.html#types
+## source : https://lighthouse-php.com/6/api-reference/directives.html#where
+## source : https://graphql.org/learn/mutations/
+## source : https://lighthouse-php.com/6/the-basics/schema.html#the-root-types
+## source : j'ai écrit dans ma barre de recherche : php graphql laravel, liste operator. Et Copilot m'a répondu.
+
+type Film {
+    id: ID!
+    title: String!
+    release_year: String!
+    length: Int!
+    description: String!
+    rating: String!
+    special_features: String!
+    image: String!
+    created_at: DateTime!
+    language : Language! @belongsTo
+    critics : [Critic!]! @hasMany
+    actors : [Actor!]! @belongsToMany
+}
+type Language {
+    id: ID!
+    name: String!
+    films : [Film!]! @hasMany
+}
+type Critic {
+    id: ID!
+    score: Float!
+    comment: String!
+    created_at: DateTime
+    updated_at: DateTime
+    film : Film! @belongsTo
+    user : User! @belongsTo
+}
+type Actor {
+    id: ID!
+    last_name: String!
+    first_name: String!
+    birthdate: String!
+    films : [Film!]! @belongsToMany
+}
+
+type Query {
+    films : [Film!]! @all
+    films (id : ID! @eq) : Film @find
+
+    filmsPaginated(
+        first: Int = 10
+        page: Int = 1
+    ): [Film!]! @paginate(
+        model: "App\\Models\\Film"
+        defaultCount: 10
+        )
+
+    filmsFiltreByTitle(
+        title : String @where(key : "title", operator : "Like")
+    ) : [Film!]! @paginate(
+        model: "App\\Models\\Film"
+        defaultCount: 10
+        )
+
+    filmsFiltreByDescription(
+        description : String @where(key : "description", operator : "Like")
+        release_year : Int @where(key : "release_year", operator : ">=")
+        length_min : Int @where(key : "length", operator : ">")
+        length_max : Int @where(key : "length", operator : "<")
+    ) : [Film!]! @paginate(
+        model: "App\\Models\\Film"
+        defaultCount: 10
+        )
+}
+
