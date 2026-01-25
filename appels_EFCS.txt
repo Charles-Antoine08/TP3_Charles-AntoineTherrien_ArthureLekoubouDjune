@@ -1,110 +1,169 @@
 ## Consulter un film en particulier
-
 query {
-  films (id:2){
-    title,
-    critics {
-      id,
-      score,
-      comment,
-    }
+  film(id: 1) {
+    title
+    description
+    release_year
+    length
   }
 }
+
 
 ## Consultation de tous les acteurs d’un certain film
 
-## J'ai mit id:9 comme exemple mais il marche pour chaque id de film.
-
 query {
-  films (id:9) {
-    title,
+  film(id: 1) {
+    title
     actors {
-      last_name,
-      first_name,
-      birthdate,
+      first_name
+      last_name
+      birthdate
     }
   }
 }
+
 
 ## Recherche de films - Cas 1 : Sans critère avec pagination (demandez la page 1)
 
 query {
-  filmsPaginated (page:1){
+  films(first: 10, page: 1) {
     data {
-      id,
-      title,
-      description,
-      release_year,
-      length,
+      id
+      title
+      release_year
+      length
     }
     paginatorInfo {
       currentPage
-      lastPage,
+      lastPage
     }
   }
 }
+
 
 ## Recherche de films - Cas 2 : Avec le mot-clé "AL" (sur titre ou descritpion) avec pagination (demandez la page 1)
 
 query {
-  filmsFiltreByTitle (title: "%AL%", page:1){
+  films(keyword: "AL", first: 10, page: 1) {
     data {
-      id,
-      title,
-      description,
-      release_year,
-      length,
+      id
+      title
+      description
     }
     paginatorInfo {
       currentPage
-      lastPage,
+      lastPage
     }
   }
 }
+
 
 ## Recherche de films - Cas 3 : Avec le mot-clé "AL" (sur titre ou descritpion), minimum année 2006, entre 120 et 150 minutes avec pagination (demandez la page 1)
 
+
 query {
-  filmsFiltreByDescription (description: "%AL%", 
-    release_year : 2006, length_min : 120, length_max : 150, 
-    page:1){
+  films(
+    keyword: "AL"
+    min_year: "2006"
+    min_length: 120
+    max_length: 150
+    first: 10
+    page: 1
+  ) {
     data {
-      id,
-      title,
-      description,
-      release_year,
-      length,
+      id
+      title
+      release_year
+      length
     }
     paginatorInfo {
       currentPage
-      lastPage,
+      lastPage
     }
   }
 }
 
+
 ## Consulter les informations de l’utilisateur authentifié
 
+query {
+  me {
+    id
+    login
+    email
+    first_name
+    last_name
+    created_at
+  }
+}
 
 ## Consulter les critiques de l’utilisateur authentifié
 
+query {
+  myCritics {
+    id
+    score
+    comment
+    film {
+      id
+      title
+    }
+  }
+}
 
 ## Ajout d’une critique de film
+
+mutation {
+  createCritic(
+    film_id: 1
+    score: 8.5
+    comment: "Très bon film"
+  ) {
+    id
+    score
+    comment
+  }
+}
+
 
 
 ## Ajout d’un acteur (lier l'acteur au film 1, mettre à jour l'image du film 2)
 
-
-
 mutation {
-  createCritic(user_id: 1
-  film_id: 1 score: 84.2 
-   comment: "Quel film incroyable!!"
- ) {
-   id
-   score
-   comment
-   film {
-     title
+  createActor(
+    input: {
+      first_name: "Tom"
+      last_name: "Hanks"
+      birthdate: "1956-07-09 00:00:00"
+      film_id: [1]
+    }
+  ) {
+    first_name
+    last_name
+    films {
+      id
+      title
     }
   }
 }
+
+
+
+mutation {
+  createActor(
+    input: {
+      first_name: "Test"
+      last_name: "Image"
+      film_update: [
+        {
+          film_id: 2
+          image: "https://example.com/image.jpg"
+        }
+      ]
+    }
+  ) {
+    id
+  }
+}
+
+
